@@ -1,32 +1,32 @@
-from flask import Flask, render_template, request
+import streamlit as st
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-# Initialize Flask app and SentimentIntensityAnalyzer
-app = Flask(__name__)
+# Initialize SentimentIntensityAnalyzer
 sia = SentimentIntensityAnalyzer()
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+st.set_page_config(page_title="Sentiment Analysis", layout="centered")
+st.title("💬 Sentiment Analysis App")
 
-@app.route('/analyze', methods=['POST'])
-def analyze():
-    text = request.form['text']
-    sentiment = sia.polarity_scores(text)
-    compound_score = sentiment['compound']
+# Text input
+text = st.text_area("Enter text to analyze:")
 
-    if compound_score > 0.1 and not ('not hate' in text.lower()):
-        result = 'Positive'
-        color_class = 'positive'
-    elif compound_score < -0.1:
-        result = 'Negative'
-        color_class = 'negative'
+# Analyze on button click
+if st.button("Analyze"):
+    if text.strip() == "":
+        st.warning("Please enter some text.")
     else:
-        result = 'Neutral'
-        color_class = 'neutral'
+        sentiment = sia.polarity_scores(text)
+        compound_score = sentiment['compound']
 
-    return render_template('index.html', text=text, result=result, sentiment=sentiment, color_class=color_class)
+        if compound_score > 0.1 and not ('not hate' in text.lower()):
+            result = 'Positive 😀'
+            color = 'lightgreen'
+        elif compound_score < -0.1:
+            result = 'Negative 😠'
+            color = 'salmon'
+        else:
+            result = 'Neutral 😐'
+            color = 'lightgray'
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        st.markdown(f"**Result:** <span style='background-color:{color};padding:5px;border-radius:5px'>{result}</span>", unsafe_allow_html=True)
+        st.json(sentiment)
