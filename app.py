@@ -1,7 +1,11 @@
 import streamlit as st
+import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-# Initialize SentimentIntensityAnalyzer
+# Download VADER lexicon if not already
+nltk.download('vader_lexicon')
+
+# Initialize sentiment analyzer
 sia = SentimentIntensityAnalyzer()
 
 st.set_page_config(page_title="Sentiment Analysis", layout="centered")
@@ -10,10 +14,10 @@ st.title("💬 Sentiment Analysis App")
 # Text input
 text = st.text_area("Enter text to analyze:")
 
-# Analyze on button click
+# Analyze button
 if st.button("Analyze"):
-    if text.strip() == "":
-        st.warning("Please enter some text.")
+    if not text.strip():
+        st.warning("⚠️ Please enter some text before analyzing.")
     else:
         sentiment = sia.polarity_scores(text)
         compound_score = sentiment['compound']
@@ -28,5 +32,8 @@ if st.button("Analyze"):
             result = 'Neutral 😐'
             color = 'lightgray'
 
-        st.markdown(f"**Result:** <span style='background-color:{color};padding:5px;border-radius:5px'>{result}</span>", unsafe_allow_html=True)
+        st.markdown(
+            f"**Result:** <span style='background-color:{color}; padding:5px; border-radius:5px'>{result}</span>",
+            unsafe_allow_html=True
+        )
         st.json(sentiment)
