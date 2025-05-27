@@ -1,2 +1,5 @@
 streamlit
 nltk
+langdetect 
+matplotlib 
+wordcloud
