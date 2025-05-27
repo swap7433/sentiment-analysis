@@ -263,9 +263,6 @@ if st.session_state.analyze_clicked and st.session_state.text.strip():
     st.markdown("### Suggested Emoji")
     st.markdown(random.choice(emoji_map[sentiment_label]), unsafe_allow_html=True)
 
-    st.markdown("### Fun GIF")
-    st.image(gif_map[sentiment_label])
-
 if st.session_state.analyze_clicked and st.session_state.text.strip():
     words = st.session_state.text.split()
     word_scores = [(w, sia.polarity_scores(w)['compound']) for w in words]
